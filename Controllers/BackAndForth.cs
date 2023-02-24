@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace OuroborosearchAPI
 {
@@ -36,14 +37,17 @@ namespace OuroborosearchAPI
 
         // GET: api/Todo/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Search>> GetSearchItem(long id)
+        public async Task<ActionResult<IEnumerable<Search>>> GetSearchItem(string id)
         {
-            var search = await _context.SearchSet.FindAsync(id);
+            
+            var search = await _context.SearchSet.Where(s => s.SearchString.Contains(id)).ToListAsync();
 
             if (search == null)
             {
                 return NotFound();
             }
+
+            //string jsonSearch = System.Text.Json.JsonSerializer.Serialize(search);
 
             return search;
         }
